@@ -12,7 +12,7 @@ A lightweight Discord bot designed to monitor system stats from a Raspberry Pi 5
 - Details include:
   - 🧠 RAM usage
   - 🔥 CPU temperature
-  - ⚙️ CPU usage (with bar graph)
+  - ⚙️ CPU usage
   - 💾 Disk space used
   - ⏱️ System uptime
 
