@@ -7,8 +7,6 @@ A lightweight Discord bot designed to monitor system stats from a Raspberry Pi 5
 ## ✨ Features
 
 - Live system stats updated in real time
-- Dynamic embed color based on CPU temperature
-- Visual CPU load bar + percentage
 - Details include:
   - 🧠 RAM usage
   - 🔥 CPU temperature
