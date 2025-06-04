@@ -1,13 +1,37 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const { getSystemStats } = require("./src/utils/status");
+const fs = require("fs");
+const path = require("path");
+const { Collection } = require("discord.js");
+const deployCommands = require("./deploy-commands");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+client.commands = new Collection();
+
+deployCommands()
+  .then(() => {
+    console.log("✅ Slash commands deployed!");
+  })
+  .catch((err) => {
+    console.error("❌ Failed to deploy commands:", err);
+  });
+
+const commandsPath = path.join(__dirname, "src", "commands");
+const commandFiles = fs
+  .readdirSync(commandsPath)
+  .filter((file) => file.endsWith(".js"));
 
 let statusMessage = null;
 let isRateLimited = false;
 let lastStats = null;
 let channel = null;
+
+for (const file of commandFiles) {
+  const filePath = path.join(commandsPath, file);
+  const command = require(filePath);
+  client.commands.set(command.data.name, command);
+}
 
 function hasStatsChanged(newStats, oldStats) {
   if (!oldStats) return true;
@@ -122,6 +146,30 @@ async function clearChannelMessages(channel) {
     console.error("Błąd podczas czyszczenia kanału:", err);
   }
 }
+
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  const command = client.commands.get(interaction.commandName);
+  if (!command) return;
+
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    console.error("Błąd komendy:", error);
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({
+        content: "❌ Wystąpił błąd przy wykonywaniu komendy.",
+        ephemeral: true,
+      });
+    } else {
+      await interaction.reply({
+        content: "❌ Wystąpił błąd przy wykonywaniu komendy.",
+        ephemeral: true,
+      });
+    }
+  }
+});
 
 client.once("ready", async () => {
   console.log(`Zalogowano jako ${client.user.tag}`);
