@@ -39,6 +39,7 @@ To customize which user can execute the command, update the `ALLOWED_USER_ID` co
 
 ```js
 const ALLOWED_USER_ID = "123456789012345678"; // REPLACE WITH YOUR USER ID
+```
 
 ## 📦 Requirements
 
