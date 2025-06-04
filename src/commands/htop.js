@@ -7,6 +7,8 @@ const {
 } = require("discord.js");
 const si = require("systeminformation");
 
+const ALLOWED_USER_ID = "123456789012345678"; // REPLACE WITH YOUR USER ID
+
 function getUniqueProcessesByName(processList) {
   const map = new Map();
 
@@ -58,7 +60,15 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("htop")
     .setDescription("📊 Wyświetla listę unikalnych procesów jak `htop`."),
+
   async execute(interaction) {
+    if (interaction.user.id !== ALLOWED_USER_ID) {
+      return interaction.reply({
+        content: "❌ You do not have permission to use this command.",
+        ephemeral: true,
+      });
+    }
+
     await interaction.deferReply();
 
     try {
