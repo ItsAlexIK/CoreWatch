@@ -15,6 +15,8 @@ A lightweight Discord bot designed to monitor system stats from a Raspberry Pi 5
   - ⏱️ System uptime
   - `/htop` command to display an interactive process list directly in Discord (like the Linux `htop`)
 
+ ![Status](./assets/status.png)
+
 ## 💻 `/htop` Command
 
 Use the `/htop` command to view a live list of the most resource-intensive processes on your machine.
