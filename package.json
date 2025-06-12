@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "ItsAlex",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "discord.js": "^14.19.3",
