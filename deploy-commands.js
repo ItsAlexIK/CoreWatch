@@ -16,7 +16,7 @@ async function deployCommands() {
       commands.push(command.data.toJSON());
     } else {
       console.warn(
-        `[UWAGA] Komenda w pliku ${file} nie zawiera "data" lub "execute".`
+        `[WARNING] Command in file ${file} is missing "data" or "execute".`
       );
     }
   }
@@ -24,7 +24,7 @@ async function deployCommands() {
   const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
   try {
-    console.log(`⏳ Rejestruję ${commands.length} komend...`);
+    console.log(`⏳ Registering ${commands.length} commands...`);
 
     await rest.put(
       Routes.applicationGuildCommands(
@@ -34,9 +34,9 @@ async function deployCommands() {
       { body: commands }
     );
 
-    console.log("✅ Pomyślnie zarejestrowano komendy slash.");
+    console.log("✅ Successfully registered slash commands.");
   } catch (error) {
-    console.error("❌ Błąd przy rejestracji komend:", error);
+    console.error("❌ Error registering commands:", error);
     throw error;
   }
 }
