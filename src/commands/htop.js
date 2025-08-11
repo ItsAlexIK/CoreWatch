@@ -44,13 +44,13 @@ function generateEmbed(processes, page, pageSize) {
   });
 
   return new EmbedBuilder()
-    .setTitle("📄 Lista aktywnych procesów")
+    .setTitle("📄 List of Active Processes")
     .addFields(fields)
     .setColor(0x2b2d31)
     .setFooter({
-      text: `Strona ${
+      text: `Page ${
         page + 1
-      } z ${totalPages} • ${new Date().toLocaleString()}`,
+      } of ${totalPages} • ${new Date().toLocaleString()}`,
       iconURL: "https://cdn-icons-png.flaticon.com/512/2920/2920346.png",
     })
     .setTimestamp();
@@ -59,7 +59,7 @@ function generateEmbed(processes, page, pageSize) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("htop")
-    .setDescription("📊 Wyświetla listę unikalnych procesów jak `htop`."),
+    .setDescription("📊 Displays a list of unique processes like `htop`."),
 
   async execute(interaction) {
     if (interaction.user.id !== ALLOWED_USER_ID) {

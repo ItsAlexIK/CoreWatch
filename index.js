@@ -66,25 +66,25 @@ async function updateLoop() {
         })
         .addFields(
           {
-            name: "🧠 Pamięć RAM",
+            name: "🧠 RAM Memory",
             value: `\`\`\`yaml\n${stats.memory}\n\`\`\``,
             inline: true,
           },
           {
-            name: "🔥 Temperatura CPU",
+            name: "🔥 CPU Temperature",
             value:
               stats.temperature === "N/A"
-                ? "`Brak danych`"
+                ? "`No data`"
                 : `\`\`\`fix\n${stats.temperature} °C\n\`\`\``,
             inline: true,
           },
           {
-            name: "⚙️ Obciążenie CPU",
+            name: "⚙️ CPU Load",
             value: `\`\`\`css\n${stats.cpuUsage} %\n\`\`\``,
             inline: true,
           },
           {
-            name: "💾 Dysk",
+            name: "💾 Disk",
             value: `\`\`\`yaml\n${stats.diskUsage}\n\`\`\``,
             inline: true,
           },
@@ -117,7 +117,7 @@ async function updateLoop() {
           isRateLimited = false;
         }, 5000);
       } else {
-        console.error("Błąd:", error);
+        console.error("Error:", error);
       }
     }
   }
@@ -141,9 +141,9 @@ async function clearChannelMessages(channel) {
         await channel.bulkDelete(deletable, true);
       }
     } while (fetched.size >= 2);
-    console.log("Kanał został wyczyszczony.");
+    console.log("Channel has been cleared.");
   } catch (err) {
-    console.error("Błąd podczas czyszczenia kanału:", err);
+    console.error("Error while clearing channel:", err);
   }
 }
 
@@ -156,15 +156,15 @@ client.on("interactionCreate", async (interaction) => {
   try {
     await command.execute(interaction);
   } catch (error) {
-    console.error("Błąd komendy:", error);
+    console.error("Command error:", error);
     if (interaction.replied || interaction.deferred) {
       await interaction.followUp({
-        content: "❌ Wystąpił błąd przy wykonywaniu komendy.",
+        content: "❌ An error occurred while executing the command.",
         ephemeral: true,
       });
     } else {
       await interaction.reply({
-        content: "❌ Wystąpił błąd przy wykonywaniu komendy.",
+        content: "❌ An error occurred while executing the command.",
         ephemeral: true,
       });
     }
@@ -172,7 +172,7 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.once("ready", async () => {
-  console.log(`Zalogowano jako ${client.user.tag}`);
+  console.log(`Logged in as ${client.user.tag}`);
   channel = await client.channels.fetch(process.env.DISCORD_CHANNEL_ID);
 
   await clearChannelMessages(channel);
