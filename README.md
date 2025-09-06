@@ -72,6 +72,60 @@ DISCORD_CHANNEL_ID=your-discord-channel-id
 
 ```
 node index.js
+
+```
+
+## 🚀 Auto-run at Startup (systemd)
+
+Set the bot to start automatically on boot.
+
+1. Create the service file  
+```
+sudo nano /etc/systemd/system/corewatch.service
+```
+
+2. Paste and adjust (set WorkingDirectory, ExecStart path to your Node binary if different, and User)
+```
+[Unit]
+Description=CoreWatch Discord Bot
+After=network.target
+
+[Service]
+WorkingDirectory=/root/CoreWatch
+ExecStart=/usr/bin/node index.js
+Restart=always
+User=root
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+```
+
+3. Enable and start the service
+```
+sudo systemctl daemon-reload
+sudo systemctl enable corewatch.service
+sudo systemctl start corewatch.service
+```
+
+4. Verify it is running
+```
+systemctl status corewatch.service
+```
+
+5. View logs (Ctrl+C to exit)
+```
+journalctl -u corewatch.service -f
+```
+
+To stop:
+```
+sudo systemctl stop corewatch.service
+```
+
+To restart after changes:
+```
+sudo systemctl restart corewatch.service
 ```
 
 ## 📬 Connect 
