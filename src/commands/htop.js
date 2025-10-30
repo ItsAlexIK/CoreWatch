@@ -9,7 +9,7 @@ const {
 const si = require("systeminformation");
 
 const ALLOWED_USER_ID = "123456789012345678"; // REPLACE WITH YOUR USER ID
-const ALLOWED_ROLE_ID = "1392088061424439348"; // REPLACE WITH YOUR ROLE ID
+const ALLOWED_ROLE_ID = "123456789012345678"; // REPLACE WITH YOUR ROLE ID
 
 
 function getUniqueProcessesByName(processList) {
