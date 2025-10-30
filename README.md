@@ -36,11 +36,13 @@ Use the `/htop` command to view a live list of the most resource-intensive proce
 The `/htop` command is restricted to a specific Discord user ID for security reasons. Only the designated user can run this command to view system processes.
 
 The command code is located at [`src/commands/htop.js`](./src/commands/htop.js).
+To specify who can run the command, update the `ALLOWED_USER_ID` or `ALLOWED_ROLE_ID` constants in `src/commands/htop.js`:
+- If both are set, the command will allow access if the user matches either the user ID or the role ID (logical OR).
 
-To customize which user can execute the command, update the `ALLOWED_USER_ID` constant in the command's code:
 
 ```js
 const ALLOWED_USER_ID = "123456789012345678"; // REPLACE WITH YOUR USER ID
+const ALLOWED_ROLE_ID = "123456789012345678"; // REPLACE WITH YOUR ROLE ID
 ```
 
 ## 📦 Requirements
@@ -72,7 +74,6 @@ DISCORD_CHANNEL_ID=your-discord-channel-id
 
 ```
 node index.js
-
 ```
 
 ## 🚀 Auto-run at Startup (systemd)

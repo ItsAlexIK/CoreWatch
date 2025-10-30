@@ -4,10 +4,13 @@ const {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  MessageFlags,
 } = require("discord.js");
 const si = require("systeminformation");
 
 const ALLOWED_USER_ID = "123456789012345678"; // REPLACE WITH YOUR USER ID
+const ALLOWED_ROLE_ID = "123456789012345678"; // REPLACE WITH YOUR ROLE ID
+
 
 function getUniqueProcessesByName(processList) {
   const map = new Map();
@@ -62,10 +65,15 @@ module.exports = {
     .setDescription("📊 Displays a list of unique processes like `htop`."),
 
   async execute(interaction) {
-    if (interaction.user.id !== ALLOWED_USER_ID) {
+    const isAllowedUser = interaction.user.id === ALLOWED_USER_ID;
+    const hasAllowedRole =
+      interaction.inGuild() &&
+      Boolean(interaction.member?.roles?.cache?.has(ALLOWED_ROLE_ID));
+
+    if (!isAllowedUser && !hasAllowedRole) {
       return interaction.reply({
         content: "❌ You do not have permission to use this command.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
@@ -117,9 +125,9 @@ module.exports = {
         await message.edit({ components: [disabledRow] });
       });
     } catch (err) {
-      console.error("Błąd komendy /htop:", err);
+      console.error("Error in /htop command:", err);
       await interaction.editReply(
-        "❌ Wystąpił błąd podczas pobierania procesów."
+        "❌ An error occurred while fetching processes."
       );
     }
   },
