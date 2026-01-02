@@ -11,8 +11,8 @@
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
-    "discord.js": "^14.19.3",
-    "dotenv": "^16.5.0",
-    "systeminformation": "^5.27.1"
+    "discord.js": "^14.25.1",
+    "dotenv": "^17.2.3",
+    "systeminformation": "^5.28.9"
   }
 }

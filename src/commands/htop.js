@@ -8,8 +8,8 @@ const {
 } = require("discord.js");
 const si = require("systeminformation");
 
-const ALLOWED_USER_ID = "123456789012345678"; // REPLACE WITH YOUR USER ID
-const ALLOWED_ROLE_ID = "123456789012345678"; // REPLACE WITH YOUR ROLE ID
+const ALLOWED_USER_ID = process.env.ALLOWED_USER_ID || "";
+const ALLOWED_ROLE_ID = process.env.ALLOWED_ROLE_ID || "";
 
 
 function getUniqueProcessesByName(processList) {
