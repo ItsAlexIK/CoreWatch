@@ -9,6 +9,7 @@ build
 
 # Env
 .env.example
+.env
 
 # VCS and editor
 .git
