@@ -35,15 +35,7 @@ Use the `/htop` command to view a live list of the most resource-intensive proce
 
 The `/htop` command is restricted to a specific Discord user ID for security reasons. Only the designated user can run this command to view system processes.
 
-The command code is located at [`src/commands/htop.js`](./src/commands/htop.js).
-To specify who can run the command, update the `ALLOWED_USER_ID` or `ALLOWED_ROLE_ID` constants in `src/commands/htop.js`:
-- If both are set, the command will allow access if the user matches either the user ID or the role ID (logical OR).
-
-
-```js
-const ALLOWED_USER_ID = "123456789012345678"; // REPLACE WITH YOUR USER ID
-const ALLOWED_ROLE_ID = "123456789012345678"; // REPLACE WITH YOUR ROLE ID
-```
+To specify who can run the command, set the environment variables `ALLOWED_USER_ID` and/or `ALLOWED_ROLE_ID` in your .env file (logical OR if both are set).
 
 ## 📦 Requirements
 
@@ -53,30 +45,60 @@ const ALLOWED_ROLE_ID = "123456789012345678"; // REPLACE WITH YOUR ROLE ID
 
 ## 🔧 Setup
 
-1. Clone the repository:
+### Option A: Docker (prebuilt image)
 
+```bash
+# Pull the latest image
+docker pull ghcr.io/itsalexik/corewatch:latest
+
+# Run with required environment variables (set your real values)
+docker run -d --name corewatch --restart unless-stopped \
+  --pid=host \
+  -v /proc:/proc:ro \
+  -e DISCORD_TOKEN=your_discord_bot_token \
+  -e DISCORD_CHANNEL_ID=your_channel_id \
+  -e DISCORD_GUILD_ID=your_guild_id \
+  -e DISCORD_CLIENT_ID=your_client_id \
+  -e ALLOWED_USER_ID=allowed_user_id_optional \
+  -e ALLOWED_ROLE_ID=allowed_role_id_optional \
+  ghcr.io/itsalexik/corewatch:latest
 ```
+
+### Option B: Docker (build locally)
+
+```bash
+git clone https://github.com/ItsAlexIK/CoreWatch
+cd CoreWatch
+docker build -t corewatch .
+
+docker run -d --name corewatch --restart unless-stopped \
+  --pid=host \
+  -v /proc:/proc:ro \
+  -e DISCORD_TOKEN=your_discord_bot_token \
+  -e DISCORD_CHANNEL_ID=your_channel_id \
+  -e DISCORD_GUILD_ID=your_guild_id \
+  -e DISCORD_CLIENT_ID=your_client_id \
+  -e ALLOWED_USER_ID=allowed_user_id_optional \
+  -e ALLOWED_ROLE_ID=allowed_role_id_optional \
+  corewatch
+```
+
+### Option C: Run from source
+
+```bash
 git clone https://github.com/ItsAlexIK/CoreWatch.git
 cd CoreWatch
 npm install
-```
 
-2. Create a `.env` file in the project root with the following content:
+# Copy env template and fill in your values
+cp .env.example .env
+# Open .env and fill in your values
 
-```
-DISCORD_TOKEN=your-discord-bot-token
-DISCORD_CLIENT_ID=client_id_here
-DISCORD_GUILD_ID=guild_id_here
-DISCORD_CHANNEL_ID=your-discord-channel-id
-```
-
-3. Run the bot:
-
-```
+# Start the bot
 node index.js
 ```
 
-## 🚀 Auto-run at Startup (systemd)
+## 🚀 Auto-run at Startup (from source)
 
 Set the bot to start automatically on boot.
 
@@ -128,6 +150,7 @@ To restart after changes:
 ```
 sudo systemctl restart corewatch.service
 ```
+
 
 ## 📬 Connect 
 
