@@ -1,0 +1,15 @@
+# Dependency directories
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+dist
+build
+
+# Env
+.env.example
+
+# VCS and editor
+.git
+.gitignore

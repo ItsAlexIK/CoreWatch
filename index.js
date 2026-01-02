@@ -101,8 +101,12 @@ async function updateLoop() {
         .setTimestamp();
 
       if (!statusMessage) {
+        console.log(
+          `Sending initial status message to channel ${channel.id}.`
+        );
         statusMessage = await channel.send({ embeds: [embed] });
       } else {
+        console.log("Updating existing status message.");
         await statusMessage.edit({ embeds: [embed] });
       }
     } catch (error) {
@@ -138,6 +142,9 @@ async function clearChannelMessages(channel) {
       fetched = await channel.messages.fetch({ limit: 100 });
       const deletable = fetched.filter((msg) => msg.deletable);
       if (deletable.size > 0) {
+        console.log(
+          `Deleting ${deletable.size} existing message(s) before sending status.`
+        );
         await channel.bulkDelete(deletable, true);
       }
     } while (fetched.size >= 2);
@@ -154,6 +161,9 @@ client.on("interactionCreate", async (interaction) => {
   if (!command) return;
 
   try {
+    console.log(
+      `Executing command /${interaction.commandName} by ${interaction.user.tag} (${interaction.user.id})`
+    );
     await command.execute(interaction);
   } catch (error) {
     console.error("Command error:", error);
