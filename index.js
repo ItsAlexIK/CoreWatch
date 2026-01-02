@@ -106,7 +106,6 @@ async function updateLoop() {
         );
         statusMessage = await channel.send({ embeds: [embed] });
       } else {
-        console.log("Updating existing status message.");
         await statusMessage.edit({ embeds: [embed] });
       }
     } catch (error) {
@@ -137,17 +136,23 @@ function scheduleNext(startTime) {
 
 async function clearChannelMessages(channel) {
   try {
-    let fetched;
-    do {
-      fetched = await channel.messages.fetch({ limit: 100 });
+    while (true) {
+      const fetched = await channel.messages.fetch({ limit: 100 });
       const deletable = fetched.filter((msg) => msg.deletable);
+
       if (deletable.size > 0) {
         console.log(
           `Deleting ${deletable.size} existing message(s) before sending status.`
         );
         await channel.bulkDelete(deletable, true);
       }
-    } while (fetched.size >= 2);
+
+      // Stop when fewer than 100 messages were fetched (end of history)
+      // or when there is nothing left the bot is allowed to delete.
+      if (fetched.size < 100 || deletable.size === 0) {
+        break;
+      }
+    }
     console.log("Channel has been cleared.");
   } catch (err) {
     console.error("Error while clearing channel:", err);
@@ -181,7 +186,7 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   console.log(`Logged in as ${client.user.tag}`);
   channel = await client.channels.fetch(process.env.DISCORD_CHANNEL_ID);
 
