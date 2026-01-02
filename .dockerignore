@@ -13,3 +13,6 @@ build
 # VCS and editor
 .git
 .gitignore
+
+# Github files
+.github
