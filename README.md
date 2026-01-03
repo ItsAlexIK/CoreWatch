@@ -14,6 +14,7 @@ A lightweight Discord bot designed to monitor system stats from a Raspberry Pi 5
   - 💾 Disk space used
   - ⏱️ System uptime
   - `/htop` command to display an interactive process list directly in Discord (like the Linux `htop`)
+  - `/pidinfo` command to display detailed PID information (PID, PPID, user, CPU %, MEM %, uptime, command)
 
  ![Status](.github/assets/status.png)
 
@@ -30,8 +31,23 @@ Use the `/htop` command to view a live list of the most resource-intensive proce
 - Output is styled to be Discord-friendly and readable
 
 ![Active processes](.github/assets/htop-preview.png)
+## 🔍 `/pidinfo` Command
 
-## 🛡️ Permission Restriction for `/htop` Command
+Use the `/pidinfo` command to inspect a specific process by PID.
+
+- Displays:
+  - 🔹 PID
+  - 🔗 PPID
+  - 👤 User
+  - 🖥️ CPU usage
+  - 📊 Memory usage
+  - ⏱️ Uptime
+  - 📝 Command
+
+
+![PID Info](.github/assets/pidinfo.png)
+
+## 🛡️ Permission Restriction for `/htop` and `/pidinfo` Command
 
 The `/htop` command is restricted to a specific Discord user ID for security reasons. Only the designated user can run this command to view system processes.
 
