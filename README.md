@@ -47,7 +47,7 @@ Use the `/pidinfo` command to inspect a specific process by PID.
 
 ![PID Info](.github/assets/pidinfo.png)
 
-## 🛡️ Permission Restriction for `/htop` and `/pidinfo` Command
+## 🛡️ Permission Restriction for `/htop` and `/pidinfo` Commands
 
 The `/htop` command is restricted to a specific Discord user ID for security reasons. Only the designated user can run this command to view system processes.
 
