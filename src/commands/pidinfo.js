@@ -1,4 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  MessageFlags,
+} = require("discord.js");
 const { execFile } = require("node:child_process");
 const { promisify } = require("node:util");
 const fs = require("node:fs/promises");
@@ -7,6 +11,12 @@ const os = require("node:os");
 const ALLOWED_USER_ID = process.env.ALLOWED_USER_ID || "";
 const ALLOWED_ROLE_ID = process.env.ALLOWED_ROLE_ID || "";
 const execFileAsync = promisify(execFile);
+
+if (!ALLOWED_USER_ID && !ALLOWED_ROLE_ID) {
+  throw new Error(
+    "PIDInfo command is disabled: ALLOWED_USER_ID and ALLOWED_ROLE_ID are not set."
+  );
+}
 
 function truncate(text, max = 1000) {
   return text.length <= max ? text : text.slice(0, max - 3) + "...";
@@ -25,7 +35,7 @@ function formatEtime(etime) {
   for (const re of patterns) {
     const m = etime.match(re);
     if (!m) continue;
-    const [ , d = "0", h = "0", m1 = "0", s = "0" ] = m;
+    const [, d = "0", h = "0", m1 = "0", s = "0"] = m;
     const days = Number(d || 0);
     const hours = Number(h || 0);
     const mins = Number(m1 || 0);
@@ -78,7 +88,8 @@ async function fetchPidInfo(pid) {
     };
   } catch (err) {
     const stderr = err?.stderr || "";
-    const busyboxPs = /unrecognized option: p/i.test(stderr) || /BusyBox/i.test(stderr);
+    const busyboxPs =
+      /unrecognized option: p/i.test(stderr) || /BusyBox/i.test(stderr);
     if (!busyboxPs) throw err;
     return fetchPidInfoBusybox(pid);
   }
@@ -86,7 +97,10 @@ async function fetchPidInfo(pid) {
 
 async function fetchPidInfoBusybox(pid) {
   // BusyBox ps lacks -p and has limited columns; pull all and filter
-  const { stdout } = await execFileAsync("ps", ["-o", "pid,ppid,user,etime,time,stat,args"]);
+  const { stdout } = await execFileAsync("ps", [
+    "-o",
+    "pid,ppid,user,etime,time,stat,args",
+  ]);
 
   const lines = stdout.trim().split("\n");
   if (lines.length < 2) {
@@ -99,9 +113,9 @@ async function fetchPidInfoBusybox(pid) {
     throw new Error("PID not found");
   }
 
-  const match = row.trim().match(
-    /^(\d+)\s+(\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.+)$/
-  );
+  const match = row
+    .trim()
+    .match(/^(\d+)\s+(\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.+)$/);
 
   if (!match) {
     throw new Error("Unable to parse ps output");
@@ -154,7 +168,7 @@ async function sampleCpuPercent(pid, delayMs = 250) {
   const startTicks = proc2.start;
   const clkTck = getClkTck();
   const elapsed = Math.max(0.01, uptime - startTicks / clkTck);
-  return ((procTicks / clkTck) / elapsed) * 100;
+  return (procTicks / clkTck / elapsed) * 100;
 }
 
 async function sampleMemPercent(pid) {
@@ -237,18 +251,20 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    const isAllowedUser = interaction.user.id === ALLOWED_USER_ID;
-    const hasAllowedRole =
-      interaction.inGuild() &&
-      Boolean(interaction.member?.roles?.cache?.has(ALLOWED_ROLE_ID));
+    const allowedByUser =
+      ALLOWED_USER_ID && interaction.user.id === ALLOWED_USER_ID;
 
-    if (!isAllowedUser && !hasAllowedRole) {
+    const allowedByRole =
+      ALLOWED_ROLE_ID &&
+      interaction.inGuild() &&
+      interaction.member?.roles?.cache.has(ALLOWED_ROLE_ID);
+
+    if (!allowedByUser && !allowedByRole) {
       return interaction.reply({
         content: "❌ You do not have permission to use this command.",
         flags: MessageFlags.Ephemeral,
       });
     }
-
     const pid = interaction.options.getInteger("pid", true);
 
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -259,9 +275,10 @@ module.exports = {
       await interaction.editReply({ embeds: [embed] });
     } catch (err) {
       console.error("Error in /pidinfo command:", err);
-      const message = err?.message === "PID not found"
-        ? "❌ No process found for that PID."
-        : "❌ Failed to fetch PID info.";
+      const message =
+        err?.message === "PID not found"
+          ? "❌ No process found for that PID."
+          : "❌ Failed to fetch PID info.";
 
       await interaction.editReply({ content: message });
     }
