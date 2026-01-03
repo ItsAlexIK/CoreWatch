@@ -72,7 +72,7 @@ async function fetchPidInfo(pid) {
     );
 
     if (!match) {
-      throw new Error("Unable to parse ps output");
+      throw new Error(`Unable to parse ps output: "${truncate(line, 200)}"`);
     }
 
     const [, parsedPid, ppid, user, cpu, mem, etime, cmd] = match;
@@ -118,7 +118,9 @@ async function fetchPidInfoBusybox(pid) {
     .match(/^(\d+)\s+(\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.+)$/);
 
   if (!match) {
-    throw new Error("Unable to parse ps output");
+    throw new Error(
+      `Unable to parse ps output for PID ${pid}: ${truncate(row, 200)}`
+    );
   }
 
   const [, parsedPid, ppid, user, etime, cputime, _stat, cmd] = match;
@@ -196,10 +198,25 @@ async function readTotalJiffies() {
 
 async function readProcJiffies(pid) {
   const stat = await fs.readFile(`/proc/${pid}/stat`, "utf8");
-  const parts = stat.trim().split(/\s+/);
-  const utime = Number(parts[13] || 0);
-  const stime = Number(parts[14] || 0);
-  const start = Number(parts[21] || 0);
+
+  // /proc/[pid]/stat format:
+  // pid (comm) state ppid ... utime stime ... starttime ...
+  // The comm field is in parentheses and can contain spaces, so we must
+  // locate the closing ')' and only then split the remainder on whitespace.
+  const endComm = stat.lastIndexOf(")");
+  if (endComm === -1) {
+    return { total: 0, start: 0 };
+  }
+
+  const after = stat.slice(endComm + 1).trim().split(/\s+/);
+  // After removing "pid (comm)", field indices shift by 2 positions.
+  // Field 3 (state) becomes after[0], so:
+  // - utime (field 14)  -> after[11]
+  // - stime (field 15)  -> after[12]
+  // - starttime (field 22) -> after[19]
+  const utime = Number(after[11] || 0);
+  const stime = Number(after[12] || 0);
+  const start = Number(after[19] || 0);
   return { total: utime + stime, start };
 }
 
