@@ -233,6 +233,7 @@ module.exports = {
         .setDescription("Process ID to inspect")
         .setRequired(true)
         .setMinValue(1)
+        .setMaxValue(2147483647)
     ),
 
   async execute(interaction) {
