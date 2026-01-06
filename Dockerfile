@@ -13,10 +13,10 @@ FROM alpine:3.19 AS runner
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
-RUN apk add --no-cache nodejs-current \
+RUN apk add --no-cache nodejs=~20 \
     && addgroup -S node && adduser -S node -G node
 
-COPY --from=deps /usr/src/app/node_modules ./node_modules
+COPY --from=deps --chown=node:node /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node package*.json ./
 COPY --chown=node:node index.js ./
 COPY --chown=node:node src ./src
