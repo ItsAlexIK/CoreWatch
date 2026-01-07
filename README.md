@@ -1,6 +1,6 @@
 # 🖥️ Discord System Monitor Bot
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Build and Publish Docker Image](https://github.com/ItsAlexIK/CoreWatch/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/ItsAlexIK/CoreWatch/actions/workflows/docker-publish.yml)
 
 A lightweight Discord bot designed to monitor system stats from a Raspberry Pi 5 (or any Linux-based machine). The bot periodically sends a live system status update to a selected Discord channel, including CPU load, memory usage, temperature, disk usage, and uptime.
 
