@@ -1,21 +1,27 @@
-# Use a slim Node.js base image
-FROM node:20-alpine
-
-# Set working directory
+# Build stage: install only production dependencies
+FROM node:20-alpine AS deps
 WORKDIR /usr/src/app
-
-# Keep environment in production mode by default
 ENV NODE_ENV=production
 
-# Install dependencies first to leverage Docker layer caching
 COPY package*.json ./
-RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi \
+RUN if [ -f package-lock.json ]; then npm ci --omit=dev --omit=optional --no-fund --no-audit; else npm install --omit=dev --omit=optional --no-fund --no-audit; fi \
+    && npm prune --omit=dev --omit=optional \
     && npm cache clean --force
 
-# Copy the rest of the application code
-COPY . .
+# Runtime stage: minimal Alpine with just node
+FROM alpine:3.19 AS runner
+WORKDIR /usr/src/app
+ENV NODE_ENV=production
 
-# Run as the non-root node user provided by the base image
+RUN apk add --no-cache nodejs=~20 \
+    && addgroup -S node && adduser -S node -G node
+
+COPY --from=deps --chown=node:node /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node package*.json ./
+COPY --chown=node:node index.js ./
+COPY --chown=node:node src ./src
+COPY --chown=node:node deploy-commands.js ./deploy-commands.js
+
 USER node
 
 CMD ["node", "index.js"]
