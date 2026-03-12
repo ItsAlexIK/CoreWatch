@@ -175,4 +175,4 @@ sudo systemctl restart corewatch.service
 
 ---
 
-> Made with ❤️ by ItsAlexIK
+> Made with ❤️ by ItsAlexIK & Kf637
