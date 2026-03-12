@@ -34,12 +34,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
-      # 3. Build Docker image
-      - name: Build Docker image
-        run: |
-          docker build -t ghcr.io/itsalexik/corewatch:latest .
+      # 3. Set up QEMU (enables arm64 builds on ubuntu runners)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      # 4. Push Docker image to GHCR
-      - name: Push Docker image
-        run: |
-          docker push ghcr.io/itsalexik/corewatch:latest
+      # 4. Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 5. Build and push multi-arch image
+      - name: Build and push (amd64 + arm64)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/itsalexik/corewatch:latest
+          platforms: linux/amd64,linux/arm64
