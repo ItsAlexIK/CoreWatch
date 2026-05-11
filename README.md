@@ -131,7 +131,7 @@ After=network.target
 
 [Service]
 WorkingDirectory=/root/CoreWatch
-ExecStart=/usr/bin/node index.js
+ExecStart=/usr/bin/node /root/CoreWatch/index.js
 Restart=always
 User=root
 Environment=NODE_ENV=production
