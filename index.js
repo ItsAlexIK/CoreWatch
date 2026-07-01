@@ -44,6 +44,15 @@ function hasStatsChanged(newStats, oldStats) {
   );
 }
 
+async function sendStatusMessage(embed) {
+  if (!channel) {
+    throw new Error("Status channel is not ready.");
+  }
+
+  statusMessage = await channel.send({ embeds: [embed] });
+  return statusMessage;
+}
+
 async function updateLoop() {
   const start = Date.now();
 
@@ -104,9 +113,19 @@ async function updateLoop() {
         console.log(
           `Sending initial status message to channel ${channel.id}.`
         );
-        statusMessage = await channel.send({ embeds: [embed] });
+        await sendStatusMessage(embed);
       } else {
-        await statusMessage.edit({ embeds: [embed] });
+        try {
+          await statusMessage.edit({ embeds: [embed] });
+        } catch (error) {
+          if (error.code === 10008) {
+            console.warn("Status message was deleted, sending a new one.");
+            statusMessage = null;
+            await sendStatusMessage(embed);
+          } else {
+            throw error;
+          }
+        }
       }
     } catch (error) {
       if (
